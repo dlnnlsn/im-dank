@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "im_dank"
+version = "0.0.1"
+authors = [
+    {name = "Dylan Nelson"},
+]
+description = "A tool for importing markdown notes into Anki"
+readme = "README.md"
+license = {file = "LICENSE"}
+dependencies = [
+    "Markdown",
+    "pymdown-extensions"
+]
+
+[project.scripts]
+im-dank = "im_dank.__main__:main"
