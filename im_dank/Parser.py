@@ -1,4 +1,5 @@
 from im_dank.Field import Field
+from im_dank.Note import Note
 import re
 
 
@@ -62,12 +63,10 @@ def parse(text, valid_decks=None, model_specs=None):
     current_deck = None
     current_model = None
     current_note = None
-    current_note_deck = None
-    current_note_model = None
     current_field = None
     ignore_lines = False
 
-    decks = {}
+    notes = []
     for line in text.split('\n'):
         if ignore_lines:
             if line.startswith('<!-- !Ignore -->'):
@@ -84,8 +83,6 @@ def parse(text, valid_decks=None, model_specs=None):
             deck_name = deck_match.group(1)
             if valid_decks is None or deck_name in valid_decks:
                 current_deck = deck_name
-                if current_deck not in decks:
-                    decks[current_deck] = []
             else:
                 current_deck = None
             continue
@@ -112,14 +109,12 @@ def parse(text, valid_decks=None, model_specs=None):
             if current_deck is None or current_model is None:
                 current_note = None
                 continue
-            current_note = {}
-            current_note_model = current_model
-            current_note_deck = current_deck
+            current_note = Note(current_deck, current_model)
             continue
 
         if line.startswith('<!-- !Note -->'):
             if current_note is not None:
-                decks[current_note_deck].append(current_note)
+                notes.append(current_note)
             current_note = None
             continue
 
@@ -130,9 +125,9 @@ def parse(text, valid_decks=None, model_specs=None):
             if current_note is None:
                 continue
             if model_specs is not None and \
-               field_name not in model_specs[current_note_model]:
+               field_name not in model_specs[current_note.model]:
                 continue
-            if field_name not in current_note:
+            if field_name not in current_note.fields:
                 current_note[field_name] = Field(field_name)
             current_field = current_note[field_name]
             continue
@@ -144,4 +139,4 @@ def parse(text, valid_decks=None, model_specs=None):
         if current_field is not None:
             current_field.append_line(line)
 
-    return decks
+    return notes
