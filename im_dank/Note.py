@@ -4,6 +4,9 @@ class Note:
         self.model = model
         self.fields = {}
         self.tags = []
+        self.id = None
+        self._note_start_line = None
+        self._updated_note_id = None
 
     def __getitem__(self, key):
         return self.fields[key]
@@ -13,6 +16,7 @@ class Note:
 
     def __json__(self):
         return {
+            'id': self.id,
             'deckName': self.deck,
             'modelName': self.model,
             'fields': self.fields,

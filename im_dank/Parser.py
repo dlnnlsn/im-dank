@@ -40,6 +40,14 @@ def parse(text, valid_decks=None, model_specs=None):
         The model for the note will be the currently active model. If there is
         no active model, the note will be ignored.
     - A line consisting of a single HTML comment of the form
+        <!-- Note Id: [Note Id] -->
+        will be interpreted as the start of a new note with a specified id.
+        When the <!-- !Note --> directive is encountered, the note will be
+        updated instead of added. If there is no <!-- !Note --> directive, the
+        note will be ignored. The model for the note will be the active model
+        when the <!-- Note Id: [Note Id] --> directive is reached. If there is
+        no active model, the note will be ignored.
+    - A line consisting of a single HTML comment of the form
         <!-- Field: [Field Name] -->
         will be interpreted as a directive to set the currently active field
         to the given field. Any subsequent lines will be appended to the field
@@ -60,6 +68,7 @@ def parse(text, valid_decks=None, model_specs=None):
         <!-- !Ignore -->
         will be interpreted as a directive to stop ignoring lines.
     """
+
     current_deck = None
     current_model = None
     current_note = None
@@ -67,7 +76,7 @@ def parse(text, valid_decks=None, model_specs=None):
     ignore_lines = False
 
     notes = []
-    for line in text.split('\n'):
+    for line_number, line in enumerate(text.split('\n')):
         if line.startswith('<!-- !Ignore -->'):
             ignore_lines = False
 
@@ -106,11 +115,19 @@ def parse(text, valid_decks=None, model_specs=None):
             current_model = None
             continue
 
-        if line.startswith('<!-- Note -->'):
+        note_id_match = re.match(r'<!-- Note Id: (\d+) -->', line)
+        if line.startswith('<!-- Note -->') or note_id_match:
             if current_deck is None or current_model is None:
                 current_note = None
                 continue
             current_note = Note(current_deck, current_model)
+            current_note._note_start_line = line_number
+            if not note_id_match:
+                continue
+
+        if note_id_match:
+            note_id = int(note_id_match.group(1))
+            current_note.id = note_id
             continue
 
         if line.startswith('<!-- !Note -->'):

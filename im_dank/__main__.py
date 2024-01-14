@@ -11,8 +11,21 @@ def main():
         return
     extracted_notes = parse(markdown_content)
     anki_client = AnkiConnect()
-    card_ids = anki_client.addNotes(extracted_notes)
-    print(card_ids)
+    print(anki_client.addNotes(
+        [note for note in extracted_notes if note.id is None]
+    ))
+    print(anki_client.updateNotes(
+        [note for note in extracted_notes if note.id is not None]
+    ))
+    new_content = markdown_content.split('\n')
+    for note in extracted_notes:
+        if note._updated_note_id is not None:
+            new_content[note._note_start_line] = \
+                f'<!-- Note Id: {note._updated_note_id} -->'
+        else:
+            new_content[note._note_start_line] = '<!-- Note -->'
+    with open(sys.argv[1], 'w') as markdown_file:
+        markdown_file.write('\n'.join(new_content))
 
 
 if __name__ == "__main__":
