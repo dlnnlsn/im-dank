@@ -1,5 +1,5 @@
 from im_dank.Constants import CLOZE_MARKER
-from im_dank.Markdown import converter
+from im_dank.Markdown import convert
 import re
 
 
@@ -43,7 +43,7 @@ class Field:
         Convert the field's text content to HTML that can be sent to Anki,
         and restore the cloze markers that were modified by append_line().
         """
-        raw_markdown = converter.convert('\n'.join(self._lines))
+        raw_markdown = convert('\n'.join(self._lines))
         raw_markdown, _ = re.subn(
             '<p>' + CLOZE_MARKER + r'({{c\d+::)</p>', '\\1', raw_markdown
         )

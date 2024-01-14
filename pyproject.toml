@@ -13,7 +13,8 @@ readme = "README.md"
 license = {file = "LICENSE"}
 dependencies = [
     "Markdown",
-    "pymdown-extensions"
+    "pymdown-extensions",
+    "pygments>=2.12.0",
 ]
 
 [project.scripts]
