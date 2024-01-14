@@ -1,5 +1,5 @@
+from im_dank.AnkiConnect import AnkiConnect
 from im_dank.Parser import parse
-import json
 import sys
 
 
@@ -10,7 +10,9 @@ def main():
     if markdown_content == "":
         return
     extracted_notes = parse(markdown_content)
-    print(json.dumps(extracted_notes, default=lambda o: o.__json__()))
+    anki_client = AnkiConnect()
+    card_ids = anki_client.addNotes(extracted_notes)
+    print(card_ids)
 
 
 if __name__ == "__main__":
