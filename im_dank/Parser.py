@@ -68,9 +68,10 @@ def parse(text, valid_decks=None, model_specs=None):
 
     notes = []
     for line in text.split('\n'):
+        if line.startswith('<!-- !Ignore -->'):
+            ignore_lines = False
+
         if ignore_lines:
-            if line.startswith('<!-- !Ignore -->'):
-                ignore_lines = False
             continue
 
         if line.startswith('<!-- Ignore -->'):
