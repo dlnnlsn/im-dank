@@ -4,6 +4,7 @@ import markdown
 extensions = [
     'pymdownx.arithmatex',
     'pymdownx.highlight',
+    'pymdownx.inlinehilite',
     'pymdownx.superfences',
 ]
 
