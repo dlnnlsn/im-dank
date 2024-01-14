@@ -53,3 +53,6 @@ class Field:
             .replace('</anki-mathjax block="true">', '</anki-mathjax>') \
             .replace(CLOZE_MARKER + '{{', '{{') \
             .replace(CLOZE_MARKER + '}}', '}}')
+
+    def __json__(self):
+        return self.markdown()
